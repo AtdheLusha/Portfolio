@@ -38,7 +38,10 @@ const SnowEffect: React.FC = () => {
         type: types[Math.floor(Math.random() * types.length)],
       });
     }
-    setSnowflakes(flakes);
+    // Use a callback to set snowflakes after render
+    setTimeout(() => {
+      setSnowflakes(flakes);
+    }, 0);
   }, []);
 
   // Rileva l'inclinazione del dispositivo
@@ -54,9 +57,12 @@ const SnowEffect: React.FC = () => {
     };
 
     // Richiedi permesso per l'orientamento (necessario su iOS)
-    if (typeof DeviceOrientationEvent !== "undefined" && typeof (DeviceOrientationEvent as any).requestPermission === "function") {
-      (DeviceOrientationEvent as any)
-        .requestPermission()
+    const deviceOrientationEvent = DeviceOrientationEvent as typeof DeviceOrientationEvent & {
+      requestPermission?: () => Promise<string>;
+    };
+    if (typeof DeviceOrientationEvent !== "undefined" && typeof deviceOrientationEvent.requestPermission === "function") {
+      deviceOrientationEvent
+        .requestPermission?.()
         .then((response: string) => {
           if (response === "granted") {
             window.addEventListener("deviceorientation", handleOrientation);

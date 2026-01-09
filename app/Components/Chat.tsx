@@ -39,13 +39,13 @@ const Chat: React.FC = () => {
       try {
         const parsed = JSON.parse(savedMessages);
         setMessages(
-          parsed.map((msg: any) => ({
+          parsed.map((msg: { role: string; content: string; timestamp?: string }) => ({
             ...msg,
-            timestamp: new Date(msg.timestamp),
+            timestamp: new Date(msg.timestamp || new Date().toISOString()),
           }))
         );
-      } catch (e) {
-        console.error("Error loading messages:", e);
+      } catch (_e) {
+        console.error("Error loading messages:", _e);
       }
     }
   }, []);
@@ -113,7 +113,7 @@ const Chat: React.FC = () => {
                 sender: "user",
               }),
             });
-          } catch (e) {
+          } catch {
             // Ignora errori nel salvataggio, non è critico
             console.log("Could not save message to database");
           }

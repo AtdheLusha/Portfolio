@@ -148,7 +148,7 @@ const Testimonials: React.FC = () => {
 
               {/* Feedback */}
               <p className="text-gray-700 dark:text-gray-300 mb-6 flex-1 leading-relaxed italic">
-                "{testimonial.feedback}"
+                &quot;{testimonial.feedback}&quot;
               </p>
 
               {/* Author Info */}

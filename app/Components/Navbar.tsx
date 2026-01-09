@@ -1,15 +1,12 @@
 "use client";
 
+import Link from "next/link";
 import React, { useState, useEffect, useRef } from "react";
 import {
   FaBars,
   FaTimes,
-  FaLinkedin,
-  FaGithub,
-  FaWhatsapp,
   FaMoon,
   FaSun,
-  FaGlobe,
   FaChevronDown,
   FaChevronUp,
 } from "react-icons/fa";
@@ -229,19 +226,19 @@ const Header: React.FC = () => {
       <div className="container mx-auto flex justify-between items-center">
         {/* Logo */}
         <h1 className="text-xl sm:text-2xl font-mono text-gray-900 dark:text-white tracking-wider">
-          <a href="/">ALCODE</a>
+          <Link href="/">ALCODE</Link>
         </h1>
 
         {/* Desktop Navigation (CENTRATO) */}
         <nav className="hidden md:flex absolute left-1/2 -translate-x-1/2">
           <ul className="flex items-center space-x-6">
             <li className="flex items-center">
-              <a
+              <Link
                 href="/"
                 className="text-gray-900 dark:text-gray-100 hover:text-blue-500 dark:hover:text-blue-400 transition duration-300 font-normal whitespace-nowrap"
               >
                 {t("home")}
-              </a>
+              </Link>
             </li>
             <li
               className="relative flex items-center"
@@ -421,12 +418,12 @@ const Header: React.FC = () => {
               )}
             </li>
             <li className="flex items-center">
-              <a
+              <Link
                 href="/projects"
                 className="text-gray-900 dark:text-gray-100 hover:text-blue-500 dark:hover:text-blue-400 transition duration-300 font-normal whitespace-nowrap"
               >
                 {t("projects")}
-              </a>
+              </Link>
             </li>
             <li className="flex items-center">
               <a
@@ -575,13 +572,13 @@ const Header: React.FC = () => {
             <div className="max-h-[calc(100vh-80px)] overflow-y-auto">
               <div className="px-4 py-6 space-y-2">
                 {/* Home */}
-                <a
+                <Link
                   href="/"
                   className="block px-4 py-3 rounded-xl text-gray-900 dark:text-gray-100 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 dark:hover:from-gray-800 dark:hover:to-gray-700 transition-all duration-200 font-medium text-base"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   {t("home")}
-                </a>
+                </Link>
 
                 {/* Services Dropdown Mobile */}
                 <div>
@@ -725,13 +722,13 @@ const Header: React.FC = () => {
                 </div>
 
                 {/* Projects */}
-                <a
+                <Link
                   href="/projects"
                   className="block px-4 py-3 rounded-xl text-gray-900 dark:text-gray-100 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 dark:hover:from-gray-800 dark:hover:to-gray-700 transition-all duration-200 font-medium text-base"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   {t("projects")}
-                </a>
+                </Link>
 
                 {/* Contact */}
                 <a

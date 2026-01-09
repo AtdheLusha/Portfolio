@@ -5,7 +5,7 @@ import { useLanguage } from "@/app/contexts/LanguageContext";
 
 const Hero: React.FC = () => {
   const { t } = useLanguage();
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  // const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [userName, setUserName] = useState<string | null>(null);
   const [isHovering, setIsHovering] = useState(false);
 
@@ -18,7 +18,6 @@ const Hero: React.FC = () => {
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
       mouseX.set(e.clientX);
       mouseY.set(e.clientY);
     };
@@ -31,7 +30,9 @@ const Hero: React.FC = () => {
     if (typeof window !== "undefined") {
       const savedName = localStorage.getItem("userName");
       if (savedName) {
-        setUserName(savedName);
+        setTimeout(() => {
+          setUserName(savedName);
+        }, 0);
       }
 
       const handleStorageChange = () => {

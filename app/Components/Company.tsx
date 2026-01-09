@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useRef } from "react";
 import { useLanguage } from "@/app/contexts/LanguageContext";
-import { motion, useInView, useAnimation } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 
 const Company: React.FC = () => {
   const { t } = useLanguage();
@@ -69,7 +69,7 @@ const Company: React.FC = () => {
           cancelAnimationFrame(animationRef.current);
         }
       };
-    }, [isInView, end, duration]);
+    }, [end, duration]);
 
     return (
       <motion.div
