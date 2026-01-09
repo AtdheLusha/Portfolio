@@ -77,75 +77,30 @@ const Chat: React.FC = () => {
     setInputMessage("");
     setIsTyping(true);
 
-    try {
-      // Prepara la cronologia della conversazione per il contesto
-      const conversationHistory = messages.map((msg) => ({
-        text: msg.text,
-        sender: msg.sender,
-      }));
+    // Simula un breve delay per l'effetto typing
+    setTimeout(() => {
+      // Risposte predefinite basate sulla lingua
+      const fallbackResponses: Record<string, string[]> = {
+        en: [
+          `Thank you for your message! Alcode specializes in software development, design, and technology consulting. I can help you with information about services, prices, contacts, or projects. What would you like to know more about?`,
+          `Hello! I'm here to help. Alcode offers web development, mobile, UI/UX design, testing, and consulting services. How can I assist you?`,
+          `Great question! I can provide you with information about our services, projects, contacts, or quotes. What interests you most?`,
+        ],
+        al: [
+          `Faleminderit për mesazhin tuaj! Alcode është e specializuar në zhvillim softueri, dizajn dhe konsultim teknologjik. Mund t'ju ndihmoj me informacione rreth shërbimeve, çmimeve, kontakteve ose projekteve. Për çfarë dëshironi të dini më shumë?`,
+          `Përshëndetje! Jam këtu për t'ju ndihmuar. Alcode ofron shërbime zhvillimi web, mobile, dizajn UI/UX, testimi dhe konsultim. Si mund t'ju ndihmoj?`,
+          `Pyetje e shkëlqyer! Mund t'ju ofroj informacione rreth shërbimeve tona, projekteve, kontakteve ose kuotave. Çfarë ju intereson më shumë?`,
+        ],
+        it: [
+          `Grazie per il tuo messaggio! Alcode è specializzata in sviluppo software, design e consulenza tecnologica. Posso aiutarti con informazioni su servizi, prezzi, contatti o progetti. Su cosa vorresti saperne di più?`,
+          `Ciao! Sono qui per aiutarti. Alcode offre servizi di sviluppo web, mobile, design UI/UX, testing e consulenza. Come posso assisterti?`,
+          `Ottima domanda! Posso fornirti informazioni sui nostri servizi, progetti, contatti o preventivi. Cosa ti interessa di più?`,
+        ],
+      };
 
-      // Chiama l'API IA per generare una risposta intelligente
-      const aiResponse = await fetch("/api/chat/ai", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          message: messageText,
-          conversationHistory: conversationHistory,
-          language: language, // Passa la lingua corrente
-        }),
-      });
-
-      if (aiResponse.ok) {
-        const data = await aiResponse.json();
-
-        if (data.response) {
-          // Salva anche il messaggio nel database (opzionale)
-          try {
-            await fetch("/api/chat", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                text: messageText,
-                sender: "user",
-              }),
-            });
-          } catch {
-            // Ignora errori nel salvataggio, non è critico
-            console.log("Could not save message to database");
-          }
-
-          // Aggiungi la risposta IA
-          const companyMessage: Message = {
-            id: (Date.now() + 1).toString(),
-            text: data.response,
-            sender: "company",
-            timestamp: new Date(),
-          };
-          setMessages((prev) => [...prev, companyMessage]);
-          setIsTyping(false);
-        } else {
-          throw new Error("No response from AI");
-        }
-      } else {
-        const errorData = await aiResponse.json().catch(() => ({}));
-        console.error("AI API error:", errorData);
-        throw new Error("AI API failed");
-      }
-    } catch (error) {
-      console.error("Error sending message:", error);
-      // Fallback a risposta generica intelligente
-      const fallbackResponses = [
-        `Grazie per il tuo messaggio! Alcode è specializzata in sviluppo software, design e consulenza tecnologica. Posso aiutarti con informazioni su servizi, prezzi, contatti o progetti. Su cosa vorresti saperne di più?`,
-        `Ciao! Sono qui per aiutarti. Alcode offre servizi di sviluppo web, mobile, design UI/UX, testing e consulenza. Come posso assisterti?`,
-        `Ottima domanda! Posso fornirti informazioni sui nostri servizi, progetti, contatti o preventivi. Cosa ti interessa di più?`,
-      ];
-
+      const responses = fallbackResponses[language] || fallbackResponses.it;
       const randomResponse =
-        fallbackResponses[Math.floor(Math.random() * fallbackResponses.length)];
+        responses[Math.floor(Math.random() * responses.length)];
 
       const companyMessage: Message = {
         id: (Date.now() + 1).toString(),
@@ -155,7 +110,7 @@ const Chat: React.FC = () => {
       };
       setMessages((prev) => [...prev, companyMessage]);
       setIsTyping(false);
-    }
+    }, 1000);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
