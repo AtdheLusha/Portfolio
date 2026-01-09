@@ -1,15 +1,15 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
+import { LanguageProvider } from "./contexts/LanguageContext";
+import { DarkModeProvider } from "./providers/DarkModeProvider";
+import Chat from "./Components/Chat";
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -23,11 +23,81 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  // Applica il tema immediatamente
+                  const theme = localStorage.getItem('theme');
+                  const root = document.documentElement;
+                  const body = document.body;
+                  let isDark = false;
+                  
+                  if (theme === 'dark') {
+                    root.classList.add('dark');
+                    root.style.colorScheme = 'dark';
+                    isDark = true;
+                  } else if (theme === 'light') {
+                    root.classList.remove('dark');
+                    root.style.colorScheme = 'light';
+                    isDark = false;
+                  } else {
+                    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                    if (prefersDark) {
+                      root.classList.add('dark');
+                      root.style.colorScheme = 'dark';
+                      isDark = true;
+                    } else {
+                      root.classList.remove('dark');
+                      root.style.colorScheme = 'light';
+                      isDark = false;
+                    }
+                  }
+                  
+                  if (body) {
+                    body.style.backgroundColor = isDark ? '#000000' : '#ffffff';
+                  }
+                  
+                  // Salva la lingua in una variabile globale per accesso immediato
+                  const language = localStorage.getItem('language');
+                  if (language === 'it' || language === 'al' || language === 'en') {
+                    root.setAttribute('data-language', language);
+                  } else {
+                    root.setAttribute('data-language', 'en');
+                  }
+                } catch (e) {
+                  try {
+                    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                    if (prefersDark) {
+                      document.documentElement.classList.add('dark');
+                      if (document.body) {
+                        document.body.style.backgroundColor = '#000000';
+                      }
+                    }
+                  } catch (e2) {}
+                }
+              })();
+            `,
+          }}
+        />
+      </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased overflow-x-hidden`}
+        className={`${inter.variable} font-sans antialiased overflow-x-hidden`}
+        style={{
+          fontFamily: "var(--font-inter), system-ui, sans-serif",
+          fontWeight: 300,
+          backgroundColor: "var(--background)",
+        }}
       >
-        {children}
+        <DarkModeProvider>
+          <LanguageProvider>
+            {children}
+            <Chat />
+          </LanguageProvider>
+        </DarkModeProvider>
       </body>
     </html>
   );

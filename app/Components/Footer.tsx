@@ -1,85 +1,221 @@
-import React from 'react';
-import { FaLinkedin, FaGithub, FaWhatsapp } from 'react-icons/fa';
+"use client";
+import React from "react";
+import {
+  FaLinkedin,
+  FaGithub,
+  FaWhatsapp,
+  FaPhone,
+  FaEnvelope,
+  FaMapMarkerAlt,
+} from "react-icons/fa";
+import { useLanguage } from "@/app/contexts/LanguageContext";
 
 const Footer: React.FC = () => {
-    return (
-        <footer id="Contact" className="bg-gray-900 text-gray-300 py-10 relative">
-            <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-blue-800 to-purple-900"></div>
-            <div className="container mx-auto px-6">
-                <div className="flex flex-col md:flex-row justify-between items-center md:items-start gap-8">
+  const { t } = useLanguage();
 
-                    {/* Contact Section */}
-                    <div className="text-center md:text-left space-y-4">
-                        <div className="inline-block">
-                            <h3 className="text-2xl font-bold text-white mb-2 pb-1">
-                                Contacts
-                            </h3>
-                            <div className="h-[2px] w-full bg-gradient-to-r from-blue-800 to-purple-900"></div>
-                        </div>
-                        <div className="space-y-2 text-sm sm:text-base">
-                            <div className="flex items-center justify-center md:justify-start gap-2">
-                                <span className="font-semibold text-blue-500">Telefoni:</span>
-                                <a href="tel:+3891105454" className="hover:text-white transition-colors duration-300">
-                                    +39 389 110 5454
-                                </a>
-                            </div>
-                            <div className="flex items-center justify-center md:justify-start gap-2">
-                                <span className="font-semibold text-blue-500">Email:</span>
-                                <a href="mailto:atdhe.lusha@gmail.com" className="hover:text-white transition-colors duration-300">
-                                    atdhelusha0@gmail.com
-                                </a>
-                            </div>
-                            <div className="flex items-center justify-center md:justify-start gap-2">
-                                <span className="font-semibold text-blue-500">Adresa:</span>
-                                <span>Rome, Italy</span>
-                            </div>
-                        </div>
-                    </div>
+  const quickLinks = [
+    { key: "home", href: "/#home" },
+    { key: "services", href: "/#services" },
+    { key: "company", href: "/#company" },
+    { key: "projects", href: "/projects" },
+    { key: "about", href: "/#about" },
+    { key: "contact", href: "/#Contact" },
+  ];
 
-                    {/* Social Icons Section */}
-                    <div className="flex flex-col items-center md:items-end space-y-4">
-                        <h3 className="text-xl font-bold text-white mb-2 hidden md:block">
-                            Socials
-                        </h3>
-                        <div className="flex space-x-6">
-                            <a
-                                href="https://www.linkedin.com/in/atdhe-lusha-6495351a1/"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-3xl text-gray-400 hover:text-purple-500 hover:scale-110 transition-all duration-300"
-                                aria-label="LinkedIn"
-                            >
-                                <FaLinkedin />
-                            </a>
-                            <a
-                                href="https://github.com/AtdheLusha"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-3xl text-gray-400 hover:text-white hover:scale-110 transition-all duration-300"
-                                aria-label="GitHub"
-                            >
-                                <FaGithub />
-                            </a>
-                            <a
-                                href="https://wa.me/393891105454"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-3xl text-gray-400 hover:text-purple-500 hover:scale-110 transition-all duration-300"
-                                aria-label="WhatsApp"
-                            >
-                                <FaWhatsapp />
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Copyright Section */}
-                <div className="mt-10 pt-6 text-center text-sm text-gray-500 border-t border-gray-800">
-                    &copy; {new Date().getFullYear()} Atdhe Lusha. Made with great care.
-                </div>
+  return (
+    <footer
+      id="Contact"
+      className="bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-black text-gray-900 dark:text-gray-300 py-16 px-4 md:px-8 lg:px-12 xl:px-16 relative transition-colors duration-300"
+    >
+      <div className="container mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-8 sm:gap-10 lg:gap-12 mb-12">
+          {/* About Section */}
+          <div>
+            <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+              ALCODE
+            </h4>
+            <p className="text-gray-600 dark:text-gray-400 leading-relaxed mb-4 text-sm">
+              {t("companyDescription")}
+            </p>
+            {/* Social Icons */}
+            <div className="flex space-x-3">
+              <a
+                href="https://www.linkedin.com/in/atdhe-lusha-6495351a1/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-9 h-9 flex items-center justify-center rounded-full bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-blue-600 hover:text-white dark:hover:bg-blue-600 transition-all duration-300"
+                aria-label="LinkedIn"
+              >
+                <FaLinkedin size={16} />
+              </a>
+              <a
+                href="https://github.com/AtdheLusha"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-9 h-9 flex items-center justify-center rounded-full bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-900 hover:text-white dark:hover:bg-gray-100 dark:hover:text-gray-900 transition-all duration-300"
+                aria-label="GitHub"
+              >
+                <FaGithub size={16} />
+              </a>
+              <a
+                href="https://wa.me/393891105454"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-9 h-9 flex items-center justify-center rounded-full bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-green-500 hover:text-white dark:hover:bg-green-500 transition-all duration-300"
+                aria-label="WhatsApp"
+              >
+                <FaWhatsapp size={16} />
+              </a>
             </div>
-        </footer>
-    );
-}
+          </div>
+
+          {/* Quick Links Section */}
+          <div>
+            <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+              {t("home")}
+            </h4>
+            <ul className="space-y-3">
+              {quickLinks.map((link) => (
+                <li key={link.key}>
+                  <a
+                    href={link.href}
+                    className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-300 text-sm"
+                  >
+                    {t(link.key)}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Services Section */}
+          <div>
+            <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+              {t("services")}
+            </h4>
+            <ul className="space-y-3">
+              {[
+                {
+                  titleKey: "dedicatedTeams",
+                  href: "/services/dedicated-teams",
+                },
+                {
+                  titleKey: "mobileDevelopment",
+                  href: "/services/mobile-development",
+                },
+                {
+                  titleKey: "technologyConsulting",
+                  href: "/services/technology-consulting",
+                },
+                {
+                  titleKey: "uiUxDesign",
+                  href: "/services/ui-ux-design",
+                },
+                {
+                  titleKey: "softwareTesting",
+                  href: "/services/software-testing",
+                },
+                {
+                  titleKey: "webDevelopment",
+                  href: "/services/web-development",
+                },
+              ].map((service, index) => (
+                <li key={index}>
+                  <a
+                    href={service.href}
+                    className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-300 text-sm"
+                  >
+                    {t(service.titleKey)}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Company Section */}
+          <div>
+            <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+              {t("company")}
+            </h4>
+            <ul className="space-y-3">
+              {[
+                {
+                  titleKey: "aboutUs",
+                  href: "#about",
+                },
+                {
+                  titleKey: "howWeWork",
+                  href: "#about",
+                },
+                {
+                  titleKey: "careers",
+                  href: "#careers",
+                },
+              ].map((item, index) => (
+                <li key={index}>
+                  <a
+                    href={item.href}
+                    className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-300 text-sm"
+                  >
+                    {t(item.titleKey)}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Contact Section */}
+          <div>
+            <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+              {t("contacts")}
+            </h4>
+            <ul className="space-y-4">
+              <li className="flex items-start gap-3">
+                <FaPhone
+                  className="text-blue-600 dark:text-blue-400 mt-1 flex-shrink-0"
+                  size={16}
+                />
+                <a
+                  href="tel:+393891105454"
+                  className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-300 text-sm"
+                >
+                  +39 389 110 5454
+                </a>
+              </li>
+              <li className="flex items-start gap-3">
+                <FaEnvelope
+                  className="text-blue-600 dark:text-blue-400 mt-1 flex-shrink-0"
+                  size={16}
+                />
+                <a
+                  href="mailto:atdhelusha0@gmail.com"
+                  className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-300 text-sm break-all"
+                >
+                  atdhelusha0@gmail.com
+                </a>
+              </li>
+              <li className="flex items-start gap-3">
+                <FaMapMarkerAlt
+                  className="text-blue-600 dark:text-blue-400 mt-1 flex-shrink-0"
+                  size={16}
+                />
+                <span className="text-gray-600 dark:text-gray-400 text-sm">
+                  Rome, Italy
+                </span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        {/* Copyright Section */}
+        <div className="border-t border-gray-200 dark:border-gray-800 pt-8 text-center">
+          <p className="text-sm text-gray-500 dark:text-gray-500">
+            &copy; {new Date().getFullYear()} Alcode. {t("madeWithCare")}.
+          </p>
+        </div>
+      </div>
+    </footer>
+  );
+};
 
 export default Footer;
