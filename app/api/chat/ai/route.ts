@@ -1,11 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
 
-// Inizializza OpenAI client
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+// Lazy-load OpenAI client solo quando necessario (evita errori di build)
+let openai: OpenAI | null = null;
 
+const getOpenAIClient = () => {
+  if (!openai) {
+    const apiKey = process.env.OPENAI_API_KEY;
+    if (!apiKey) {
+      throw new Error("Missing OPENAI_API_KEY environment variable");
+    }
+    openai = new OpenAI({
+      apiKey: apiKey,
+    });
+  }
+  return openai;
+};
 // Informazioni sull'azienda per il context
 const companyInfo = {
   name: "Alcode",
@@ -171,7 +181,7 @@ export async function POST(request: NextRequest) {
     });
 
     // Chiama OpenAI API
-    const completion = await openai.chat.completions.create({
+    const completion = await getOpenAIClient().chat.completions.create({
       model: "gpt-4o-mini", // Usa gpt-4o-mini per costi ridotti, puoi cambiare in gpt-4o se preferisci
       messages: messages,
       temperature: 0.7,
