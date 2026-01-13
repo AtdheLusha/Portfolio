@@ -1,153 +1,55 @@
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
 
-// Inizializza OpenAI client
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
-// Informazioni sull'azienda per il context
-const companyInfo = {
-  name: "Alcode",
-  location: "Rome, Italy",
-  email: "atdhelusha0@gmail.com",
-  phone: "+39 389 110 5454",
-  services: [
-    "Web Development (websites, e-commerce, web applications)",
-    "Mobile Development (iOS, Android, cross-platform apps)",
-    "UI/UX Design (interfaces, prototypes, design systems)",
-    "Software Testing (functional tests, security, performance)",
-    "Technology Consulting (strategy, architecture, digital transformation)",
-    "Dedicated Teams (developers dedicated to your project)",
-  ],
-  technologies: {
-    frontend: "React, Next.js, Vue.js, TypeScript",
-    backend: "Node.js, Python, PHP, Java",
-    mobile: "React Native, Flutter, Swift, Kotlin",
-    database: "PostgreSQL, MongoDB, MySQL",
-  },
-  timeEstimates: {
-    simple: "2-4 weeks",
-    corporate: "4-8 weeks",
-    complex: "8-16 weeks",
-    mobile: "6-12 weeks",
-  },
-};
-
-// Rileva la lingua del messaggio
-const detectLanguage = (message: string): string => {
-  const messageLower = message.toLowerCase();
-  
-  // Caratteristiche linguistiche
-  const albanianIndicators = [
-    /\b(përshëndetje|mirë|faleminderit|ju lutem|si|ku|kur|çfarë|kush|pse|më|të|dhe|ose|por|në|me|shërbimet|çmim|kontakt|projekt|sajt|aplikacion|dizajn|zhvillim|mobil|web|porfolio|kohë|tempo|tregoni|thuani|bëj|krijo)\b/i,
-    /[ëç]/i,
-  ];
-  
-  const englishIndicators = [
-    /\b(hello|hi|thank|please|how|where|when|what|who|why|services|price|contact|project|website|application|design|development|mobile|web|portfolio|time|cost|tell|about)\b/i,
-  ];
-  
-  const italianIndicators = [
-    /\b(ciao|salve|buongiorno|buonasera|grazie|prego|come|dove|quando|cosa|chi|perché|quanto|servizi|prezzo|contatto|progetto|sito|applicazione|design|sviluppo|mobile|web|portfolio|tempo|costo|raccontami|parlami|dimmi)\b/i,
-  ];
-  
-  let albanianScore = 0;
-  let englishScore = 0;
-  let italianScore = 0;
-  
-  albanianIndicators.forEach(pattern => {
-    if (pattern.test(messageLower)) albanianScore++;
-  });
-  englishIndicators.forEach(pattern => {
-    if (pattern.test(messageLower)) englishScore++;
-  });
-  italianIndicators.forEach(pattern => {
-    if (pattern.test(messageLower)) italianScore++;
-  });
-  
-  if (/[ëç]/.test(messageLower)) albanianScore += 2;
-  
-  if (albanianScore > englishScore && albanianScore > italianScore) return "Albanian";
-  if (englishScore > italianScore && englishScore > albanianScore) return "English";
-  return "Italian";
-};
-
-// Crea il system prompt con informazioni su Alcode
-const createSystemPrompt = (): string => {
-  return `You are a helpful AI assistant for Alcode, a software development company based in Rome, Italy.
-
-Company Information:
-- Name: ${companyInfo.name}
-- Location: ${companyInfo.location}
-- Email: ${companyInfo.email}
-- Phone: ${companyInfo.phone}
-
-Services offered:
-${companyInfo.services.map((service, index) => `${index + 1}. ${service}`).join('\n')}
-
-Technologies used:
-- Frontend: ${companyInfo.technologies.frontend}
-- Backend: ${companyInfo.technologies.backend}
-- Mobile: ${companyInfo.technologies.mobile}
-- Database: ${companyInfo.technologies.database}
-
-Time estimates:
-- Simple portfolio: ${companyInfo.timeEstimates.simple}
-- Corporate website: ${companyInfo.timeEstimates.corporate}
-- Complex application: ${companyInfo.timeEstimates.complex}
-- Mobile app: ${companyInfo.timeEstimates.mobile}
-
-Important instructions:
-1. Always respond in the SAME LANGUAGE that the user writes their question in
-2. Be helpful, friendly, and professional
-3. Provide accurate information about Alcode's services, technologies, and processes
-4. If asked about pricing, mention that prices vary based on project complexity and that a free consultation is available
-5. If asked about contact, provide the email and phone number
-6. Keep responses concise but informative
-7. If the user asks something unrelated to Alcode, politely redirect them to ask about Alcode's services
-
-Remember: ALWAYS respond in the same language the user is writing in.`;
-};
-
 export async function POST(request: NextRequest) {
+  let language = "it"; // Default language
   try {
     const body = await request.json();
-    const { message, conversationHistory } = body;
+    const { message, conversationHistory, language: langFromBody } = body;
+    if (langFromBody) language = langFromBody;
 
-    if (!message || !message.trim()) {
+    if (!message) {
       return NextResponse.json(
         { error: "Message is required" },
         { status: 400 }
       );
     }
 
-    // Verifica che la chiave API sia configurata
-    if (!process.env.OPENAI_API_KEY) {
-      console.error("OPENAI_API_KEY is not configured");
+    // Se non c'è una chiave API, restituisci un messaggio di errore (con status 200 per mostrarlo nella chat)
+    if (!process.env.GROQ_API_KEY) {
       return NextResponse.json(
-        { 
-          error: "OpenAI API key is not configured. Please set OPENAI_API_KEY in your environment variables.",
-          response: "I'm sorry, but the AI service is not properly configured. Please contact us directly at " + companyInfo.email + " or " + companyInfo.phone
+        {
+          response:
+            language === "en"
+              ? "⚠️ Groq API key is not configured. Please add GROQ_API_KEY to your .env.local file or Vercel environment variables. Get your API key at https://console.groq.com/keys"
+              : language === "al"
+              ? "⚠️ Çelësi API i Groq nuk është konfiguruar. Ju lutemi shtoni GROQ_API_KEY në skedarin .env.local ose variablat e mjedisit të Vercel. Merrni çelësin tuaj në https://console.groq.com/keys"
+              : "⚠️ La chiave API di Groq non è configurata. Si prega di aggiungere GROQ_API_KEY al file .env.local o alle variabili d'ambiente di Vercel. Ottieni la tua chiave API su https://console.groq.com/keys",
         },
-        { status: 500 }
+        { status: 200 }
       );
     }
 
-    // Rileva la lingua del messaggio
-    const detectedLanguage = detectLanguage(message);
-    console.log("AI Chat - Received message:", message);
-    console.log("AI Chat - Detected language:", detectedLanguage);
+    // Inizializza Groq client (compatibile con OpenAI API)
+    const groq = new OpenAI({
+      apiKey: process.env.GROQ_API_KEY,
+      baseURL: "https://api.groq.com/openai/v1",
+    });
 
-    // Prepara i messaggi per OpenAI
+    // Prepara i messaggi per Groq
     const messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[] = [
       {
         role: "system",
-        content: createSystemPrompt(),
+        content:
+          language === "en"
+            ? "You are a helpful assistant for a software development company called Alcode. Be professional, friendly, and concise. Help users with information about services, projects, pricing, and contacts."
+            : language === "al"
+            ? "Ju jeni një asistent i dobishëm për një kompani zhvillimi softueri të quajtur Alcode. Jini profesional, miqësor dhe konciz. Ndihmoni përdoruesit me informacione rreth shërbimeve, projekteve, çmimeve dhe kontakteve."
+            : "Sei un assistente utile per un'azienda di sviluppo software chiamata Alcode. Sii professionale, amichevole e conciso. Aiuta gli utenti con informazioni su servizi, progetti, prezzi e contatti.",
       },
     ];
 
-    // Aggiungi la cronologia della conversazione se disponibile
+    // Aggiungi la cronologia della conversazione
     if (conversationHistory && Array.isArray(conversationHistory)) {
       conversationHistory.forEach((msg: { text: string; sender: string }) => {
         if (msg.sender === "user") {
@@ -155,7 +57,7 @@ export async function POST(request: NextRequest) {
             role: "user",
             content: msg.text,
           });
-        } else if (msg.sender === "assistant" || msg.sender === "ai") {
+        } else if (msg.sender === "assistant" || msg.sender === "company") {
           messages.push({
             role: "assistant",
             content: msg.text,
@@ -170,47 +72,46 @@ export async function POST(request: NextRequest) {
       content: message,
     });
 
-    // Chiama OpenAI API
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4o-mini", // Usa gpt-4o-mini per costi ridotti, puoi cambiare in gpt-4o se preferisci
+    // Chiama Groq API
+    const completion = await groq.chat.completions.create({
+      model: "llama-3.1-70b-versatile", // Modello Groq consigliato
       messages: messages,
       temperature: 0.7,
-      max_tokens: 500,
+      max_tokens: 1000,
     });
 
-    const aiResponse = completion.choices[0]?.message?.content || 
-      "I'm sorry, I couldn't generate a response. Please try again or contact us directly.";
+    const aiResponse = completion.choices[0]?.message?.content || "";
 
-    console.log("AI Chat - Generated response:", aiResponse.substring(0, 50) + "...");
-
-    // Simula un piccolo delay per rendere la risposta più naturale
-    await new Promise((resolve) => setTimeout(resolve, 500));
-
-    return NextResponse.json({
-      success: true,
-      response: aiResponse,
-    });
-  } catch (error: any) {
-    console.error("Error generating AI response:", error);
+    return NextResponse.json({ response: aiResponse });
+  } catch (error) {
+    console.error("Groq API error:", error);
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
     
-    // Gestisci errori specifici di OpenAI
-    if (error instanceof OpenAI.APIError) {
+    // Se è un errore di autenticazione, suggerisci di controllare la chiave API
+    if (errorMessage.includes("401") || errorMessage.includes("Unauthorized") || errorMessage.includes("Invalid API key")) {
       return NextResponse.json(
         {
-          success: false,
-          error: "OpenAI API error",
-          message: error.message,
-          response: `I'm sorry, there was an error processing your request. Please contact us directly at ${companyInfo.email} or ${companyInfo.phone}`,
+          response:
+            language === "en"
+              ? "❌ Invalid Groq API key. Please check your GROQ_API_KEY in .env.local or Vercel environment variables. Get a valid key at https://console.groq.com/keys"
+              : language === "al"
+              ? "❌ Çelësi API i Groq është i pavlefshëm. Ju lutemi kontrolloni GROQ_API_KEY në .env.local ose variablat e mjedisit të Vercel. Merrni një çelës të vlefshëm në https://console.groq.com/keys"
+              : "❌ Chiave API Groq non valida. Controlla GROQ_API_KEY in .env.local o nelle variabili d'ambiente di Vercel. Ottieni una chiave valida su https://console.groq.com/keys",
         },
-        { status: error.status || 500 }
+        { status: 200 }
       );
     }
-
-    // Risposta di fallback
-    return NextResponse.json({
-      success: false,
-      error: "Internal server error",
-      response: `I'm sorry, there was an error. Please contact us directly at ${companyInfo.email} or ${companyInfo.phone}`,
-    }, { status: 500 });
+    
+    return NextResponse.json(
+      {
+        response:
+          language === "en"
+            ? `❌ Error: ${errorMessage}. Please try again or contact support.`
+            : language === "al"
+            ? `❌ Gabim: ${errorMessage}. Ju lutemi provoni përsëri ose kontaktoni mbështetjen.`
+            : `❌ Errore: ${errorMessage}. Riprova o contatta il supporto.`,
+      },
+      { status: 200 }
+    );
   }
 }

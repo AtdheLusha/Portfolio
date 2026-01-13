@@ -773,7 +773,7 @@ const translations: Record<Language, Record<string, string>> = {
     aboutUsValuesTitle: "I Nostri Valori",
     aboutUsValue1Title: "Innovazione",
     aboutUsValue1Desc:
-      "Rimaniamo all'avanguardia abbracciando le ultime tecnologie e metodologie.",
+      "Restiamo all'avanguardia adottando le tecnologie e le metodologie più recenti.",
     aboutUsValue2Title: "Eccellenza",
     aboutUsValue2Desc:
       "Siamo impegnati a offrire soluzioni della massima qualità in tutto ciò che facciamo.",

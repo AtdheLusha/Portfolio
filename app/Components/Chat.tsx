@@ -97,43 +97,31 @@ const Chat: React.FC = () => {
         }),
       });
 
-      if (aiResponse.ok) {
-        const data = await aiResponse.json();
+      const data = await aiResponse.json();
 
-        if (data.response) {
-          // Salva anche il messaggio nel database (opzionale)
-          try {
-            await fetch("/api/chat", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                text: messageText,
-                sender: "user",
-              }),
-            });
-          } catch (e) {
-            // Ignora errori nel salvataggio, non è critico
-            console.log("Could not save message to database");
-          }
-
-          // Aggiungi la risposta IA
-          const companyMessage: Message = {
-            id: (Date.now() + 1).toString(),
-            text: data.response,
-            sender: "company",
-            timestamp: new Date(),
-          };
-          setMessages((prev) => [...prev, companyMessage]);
-          setIsTyping(false);
-        } else {
-          throw new Error("No response from AI");
-        }
+      if (aiResponse.ok && data.response) {
+        // Aggiungi la risposta IA
+        const companyMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          text: data.response,
+          sender: "company",
+          timestamp: new Date(),
+        };
+        setMessages((prev) => [...prev, companyMessage]);
+        setIsTyping(false);
+      } else if (data.error || data.details) {
+        // Gestisci errori dall'API
+        const errorMessage = data.response || data.error || data.details || "Errore nella comunicazione con l'AI";
+        const companyMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          text: errorMessage,
+          sender: "company",
+          timestamp: new Date(),
+        };
+        setMessages((prev) => [...prev, companyMessage]);
+        setIsTyping(false);
       } else {
-        const errorData = await aiResponse.json().catch(() => ({}));
-        console.error("AI API error:", errorData);
-        throw new Error("AI API failed");
+        throw new Error("No response from AI");
       }
     } catch (error) {
       console.error("Error sending message:", error);
